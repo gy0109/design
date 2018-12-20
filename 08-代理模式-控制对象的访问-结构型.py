@@ -17,6 +17,7 @@
 3, 保护代理:控制对真实主题的控制访问 认证服务充当负责认证和授权的保护性代理服务器 有助域保护网站的核心功能 防止无法识别或未授权的代理访问 检查调用者是否具有转发请求所需的访问权限
 4, 智能代理:在访问时添加其他操作   资源共享锁  智能的检测核心组件是否被锁,确保其他对象没有修改他
 """
+import pymysql
 from abc import ABCMeta, abstractmethod
 
 
@@ -57,19 +58,32 @@ class You(object):
         self.is_purchased = None          # 购买
 
     def make_payment(self):
-        self.is_purchased = self.debit_card.do_pay()
+        self.is_purchased = self.debit_card.do_pay(int(input('请输入确定金额:')))
 
     def __del__(self):
         if self.is_purchased:
             print('买好了')
         else:
-            print('钱不够')
+            print('查询有误')
 
 
 class Payment(metaclass=ABCMeta):
     @abstractmethod
-    def do_pay(self):
+    def do_pay(self, payment_amount):
         pass
+
+
+class ConnectSQL(object):
+    def __init__(self, card_num):
+        self.card_num = card_num
+
+    def conn_mysql(self):
+        db = pymysql.connect(host='192.168.64.1', user='root', passwd='gy0109', db='user_test', port=3306)
+        cursor = db.cursor()
+        cursor.execute('select balance from card where card_num= %s;' % self.card_num)
+        card_amount = cursor.fetchone()
+        db.close()
+        return card_amount
 
 
 class Bank(Payment):
@@ -81,14 +95,15 @@ class Bank(Payment):
         return self.card
 
     def _has_funds(self):
-        print('您的账户是:', self._get_account())
-        return True
+        card_amount = ConnectSQL(self.card).conn_mysql()
+        print('您的账户是:', self._get_account(), '卡内余额:', card_amount)
+        return card_amount
 
     def set_card(self, card_num):
-        self.card = card_num
+        self.card = card_num       # 卡号
 
-    def do_pay(self):
-        if self._has_funds():
+    def do_pay(self, payment_amount):
+        if self._has_funds() >= payment_amount:
             print('购买成功!')
             return True
         else:
@@ -100,9 +115,10 @@ class DebitCard(Payment):
     def __init__(self):
         self.bank = Bank()
 
-    def do_pay(self):
+    def do_pay(self, payment_amount):
+        payment_amount = int(input('输入金额:'))
         self.bank.set_card(input('请输入卡号:'))
-        return self.bank.do_pay()
+        return self.bank.do_pay(payment_amount)
 
 
 if __name__ == '__main__':
