@@ -10,7 +10,7 @@
 # 2,系统: 一组混乱的子系统, 系统是一个类  是一组不同人物类型的类组合, 处理门面分配的工作  并不引用门面
 # 3,客户端:与子系统记性通信并完成工作,不用担心复杂性    实例化门面的类 像门面提出请求
 
-# 门面模式: 
+# 门面模式:
 
 
 class EventManager(object):
@@ -32,7 +32,7 @@ class Hotelier(object):
     def __init__(self):
         print('Hotelier')
 
-    def __is_available(self):
+    def __is_available(self):   # 是否有效
         return True
 
     def book_hotel(self):
