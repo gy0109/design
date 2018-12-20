@@ -78,12 +78,12 @@ class ConnectSQL(object):
         self.card_num = card_num
 
     def conn_mysql(self):
-        db = pymysql.connect(host='192.168.64.1', user='root', passwd='gy0109', db='user_test', port=3306)
+        db = pymysql.connect(host='localhost', user='root', passwd='gy0109', db='user_test', port=3306)
         cursor = db.cursor()
         cursor.execute('select balance from card where card_num= %s;' % self.card_num)
         card_amount = cursor.fetchone()
         db.close()
-        return card_amount
+        return card_amount[0]
 
 
 class Bank(Payment):
