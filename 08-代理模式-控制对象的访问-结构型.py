@@ -107,7 +107,7 @@ class Bank(Payment):
             print('购买成功!')
             return True
         else:
-            print('购买失败')
+            print('购买失败,余额不足!')
             return False
 
 
