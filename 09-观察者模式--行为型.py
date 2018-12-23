@@ -52,7 +52,8 @@ class NewsPublisher:
             sub.update()
 
     def add_new(self, news):
-        self.__subscribers.append(news)
+        # self.__subscribers.append(news)
+        self.__latest_news = news
 
     def get_news(self):
         return self.__latest_news
@@ -98,4 +99,16 @@ if __name__ == '__main__':
     # subject.notify_all('not!!!')
     # print(type(subject).__name__, subject, 'Subject')
 
-    news
+    news_publisher = NewsPublisher()
+    for Subscribers in [SMSSubscriber, EmailSubscriber, AnyOtherSubscriber]:
+        Subscribers(news_publisher)
+    print('Subscribers:', news_publisher.subscribers())
+
+    news_publisher.add_new('hello world')
+    news_publisher.notify_subscribers()
+
+    print('Detached: ', type(news_publisher.detach()).__name__)
+    print('Subscribers: ', news_publisher.subscribers())
+
+    news_publisher.add_new('second world')
+    news_publisher.notify_subscribers()
