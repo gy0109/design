@@ -1,37 +1,3 @@
-"""
-行为型模式:
-关注对象的责任,用来处理对象之间的交互,从而实现更强大的功能,    对象之间要能够交互,并且松散耦合
-"""
-from abc import ABCMeta, abstractmethod
-
-
-class Subject(object):
-    def __init__(self):
-        self.__observers = []
-
-    def register(self, observer):
-        self.__observers.append(observer)
-
-    def notify_all(self, *args, **kwargs):
-        for observer in self.__observers:
-            observer.notify(self, *args, **kwargs)
-
-
-class Observer1:
-    def __init__(self, subject):
-        subject.register(self)
-
-    def notify(self, subject, *args):
-        print(type(self).__name__, args, subject, 'observer1')
-
-
-class Observer2:
-    def __init__(self, subject):
-        subject.register(self)
-
-    def notify(self, subject, *args):
-        print(type(self).__name__, args, subject, 'observer2')
-
 
 class NewsPublisher:      # 给订户的接口  实例化为一个对象
     def __init__(self):
@@ -67,10 +33,10 @@ class Subscriber(metaclass=ABCMeta):   # 订户抽象基类
 
 class EmailSubscriber(Subscriber):     # email订户  具体观察者
     def __init__(self, publisher):
-        self.publisher = publisher     # 新闻发布者
+        self.publisher = publisher     # 观察者
         self.publisher.attach(self)
 
-    def update(self):                  # 通知添加新的新闻
+    def update(self):
         print(type(self).__name__, self.publisher.get_news())
 
 
@@ -112,10 +78,3 @@ if __name__ == '__main__':
 
     news_publisher.add_new('second world')
     news_publisher.notify_subscribers()
-
-
-"""
-观察者模式的通知方式: 
-1,拉模型:
-2,推模型:
-"""
